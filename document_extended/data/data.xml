@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <record id="documents_type_contract" model="documents.type">
+        <field name="name">Contract</field>
+    </record>
+    <record id="documents_action_set_reminder" model="documents.action">
+        <field name="name">Send reminder</field>
+    </record>
+
+    <!-- Cron for sending mail for document Expiration -->
+    <record forcecreate="True" id="document_send_reminder" model="ir.cron">
+        <field name="name">Document Expiration Reminder</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">1</field>
+        <field name="model_id" ref="model_documents_document"/>
+        <field name="state">code</field>
+        <field name="code">model._send_expiration_reminder()</field>
+    </record>
+
+    <!-- Template for document expiration reminder -->
+    <record id="mail_template_document_expiration_reminder" model="mail.template">
+        <field name="name">Document Expiration Reminder: Send by Email</field>
+        <field name="model_id" ref="model_documents_document"/>
+        <field name="subject">Document Expiration Reminder</field>
+        <field name="partner_to">{{ object.owner_id.partner_id.id}}</field>
+        <field name="body_html" type="html">
+            <div style="margin:0px; font-size:24px; font-family:arial, 'helvetica neue', helvetica, sans-serif; line-height:36px; color:#333333; text-align: center">
+                Your Document is going to expire on <t t-esc="object.expiration_date"/>
+            </div>
+        </field>
+        <field name="auto_delete" eval="True"/>
+    </record>
+</odoo>

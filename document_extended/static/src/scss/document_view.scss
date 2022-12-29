@@ -1,0 +1,28 @@
+$o-dms-inspector-label-breakpoint_new : 50%;
+.o_documents_inspector .o_documents_inspector_info .o_inspector_fields label
+{
+    white-space: normal;
+}
+
+.o_inspector_table {
+    .o_inspector_label {
+        width: 55%;
+        color: $o-dms-inspector-txt-lighter;
+        vertical-align: middle;
+        padding-left: 0;
+
+        margin-bottom: 0;
+        > * {
+            @include o-text-overflow($display: block, $max-width: $o-dms-inspector-label-breakpoint_new);
+        }
+    }
+
+    .o_inspector_value {
+        padding-left: $o-dms-p-small;
+        color: $o-dms-inspector-txt-light;
+    }
+
+    .o_input:disabled {
+        opacity: 0.6;
+    }
+}

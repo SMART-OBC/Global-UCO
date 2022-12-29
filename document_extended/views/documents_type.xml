@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- documents_type tree view -->
+    <record id="documents_type_view_tree" model="ir.ui.view">
+        <field name="name">documents.type.view.tree</field>
+        <field name="model">documents.type</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- documents_type form view -->
+    <record id="documents_type_view_form" model="ir.ui.view">
+        <field name="name">documents.type.view.form</field>
+        <field name="model">documents.type</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>                        
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- documents.type action window -->
+    <record id="documents_type_new_action" model="ir.actions.act_window">
+        <field name="name">Document Type</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">documents.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="menu_documents_type" name="Document Type" parent="documents.Config" action="document_extended.documents_type_new_action" sequence="12"/>
+
+    <!-- documents_action tree view -->
+    <record id="documents_action_view_tree" model="ir.ui.view">
+        <field name="name">documents.action.view.tree</field>
+        <field name="model">documents.action</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- documents_action form view -->
+    <record id="documents_action_view_form" model="ir.ui.view">
+        <field name="name">documents.action.view.form</field>
+        <field name="model">documents.action</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>                        
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- documents.action action window -->
+    <record id="documents_action_new_action" model="ir.actions.act_window">
+        <field name="name">Action</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">documents.action</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!-- This Menu Item must have a parent and an action -->
+    <menuitem id="menu_documents_action" name="Document Action" parent="documents.Config" action="document_extended.documents_action_new_action" sequence="14"/>
+</odoo>
