@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates id="template" xml:space="preserve">
+     <t t-name="mass_smart_dynamic">
+        <div class="oh_dashboards">
+            <div class="container-fluid my-5 o_hr_dashboard"/>
+            <div class="form-group col-1" id="company_button">
+                <label for="cars" style="font-weight: bold; font-size: initial;">Type: &amp;nbsp;</label>
+                <select id="type_selection" class="btn btn-primary" style="position: absolute;">
+                </select>
+            </div>
+            <div>
+                <button type="button" class="btn btn-primary ml-5 mr" id="pdf"
+                        style="position: absolute; top: 36px; left: 70mm;">
+                        Print (PDF)
+                </button>
+            </div>
+        </div>
+         <div class="table_smart">
+                <table class="smart-table form-group col-11" style="margin-top:50px; width:90%; margin-left:20px;"
+                       id="hash_config_table">
+                        <thead style="display: table-row-group; background-color:#714B67;; border: 0.3rem solid #714B67;;
+                            border-bottom: none;">
+                            <tr>
+                                <th class="" style="color: white;" scope="col">Name</th>
+                                <th class="" style="color: white;" scope="col">Invoice</th>
+                                <th class="" style="color: white;" scope="col">Sales Contract</th>
+                                <th class="" style="color: white;" scope="col">Company</th>
+                                <th class="" style="color: white;" scope="col">Containers</th>
+                                <th class="" style="color: white;" scope="col">Weight DN-Out</th>
+                                <th class="" style="color: white;" scope="col">Purchase contract</th>
+                                <th class="" style="color: white;" scope="col">Company</th>
+                                <th class="" style="color: white;" scope="col">Product</th>
+                                <th class="" style="color: white;" scope="col">C.O.O.</th>
+                                <th class="" style="color: white;" scope="col">DN IN</th>
+                                <th class="" style="color: white;" scope="col">Weight DN-In</th>
+                                <th class="" style="color: white;" scope="col">Transaction date</th>
+                                <th class="" style="color: white;" scope="col">Bill</th>
+                            </tr>
+                        </thead>
+                    <body class="table_body">
+                         <t t-foreach="widget.mass_report_data" t-as="line">
+                             <tr>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                     <t t-esc="line[0]"/>
+                                 </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[1]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[2]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[3]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[4]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[5]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[6]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[7]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[8]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[9]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[10]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[11]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[12]"/>
+                                                         </td>
+                                 <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                                             <t t-esc="line[13]"/>
+                                 </td>
+                             </tr>
+                         </t>
+                      </body>
+                </table>
+         </div>
+
+    </t>
+
+</templates>

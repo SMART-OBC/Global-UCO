@@ -1,0 +1,108 @@
+<odoo>
+    <template id="mass_report">
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+
+                <table class="form-group table table-sm table-bordered" style="margin-top:50px; width:90%; margin-left:20px;"
+                       id="hash_config_table">
+                    <thead style="display: table-row-group; background-color:#714B67;; border: 0.3rem solid #714B67;;
+                            border-bottom: none;">
+                        <tr>
+                            <th class="" style="color: white;" scope="col">Name</th>
+                            <th class="" style="color: white;" scope="col">Invoice</th>
+                            <th class="" style="color: white;" scope="col">Sales Contract</th>
+                            <th class="" style="color: white;" scope="col">Company</th>
+                            <th class="" style="color: white;" scope="col">Containers</th>
+                            <th class="" style="color: white;" scope="col">Weight DN-Out</th>
+                            <th class="" style="color: white;" scope="col">Purchase contract</th>
+                            <th class="" style="color: white;" scope="col">Company</th>
+                            <th class="" style="color: white;" scope="col">Product</th>
+                            <th class="" style="color: white;" scope="col">C.O.O.</th>
+                            <th class="" style="color: white;" scope="col">DN IN</th>
+                            <th class="" style="color: white;" scope="col">Weight DN-In</th>
+                            <th class="" style="color: white;" scope="col">Transaction date</th>
+                            <th class="" style="color: white;" scope="col">Bill</th>
+                        </tr>
+                    </thead>
+                    <body>
+                        <t t-foreach="lines" t-as="line">
+                            <tr>
+                                <td style="border: 0.3rem solid black; border-right: none; border-top: none;">
+                                    <t t-esc="line[0]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[1]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[2]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[3]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[4]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[5]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[6]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[7]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[8]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[9]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[10]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[11]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[12]"/>
+                                </td>
+                                <td style="border: 0.3rem solid black; border-left: none; border-top: none;">
+                                    <t t-esc="line[13]"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </body>
+                </table>
+
+            </t>
+        </t>
+    </template>
+
+
+    <record id="paperformat_mass_report" model="report.paperformat">
+        <field name="name">Mass Print</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_height">297</field>
+        <field name="page_width">210</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">23</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_spacing">60</field>
+        <field name="dpi">90</field>
+    </record>
+
+
+    <record id="action_mass_pdf" model="ir.actions.report">
+        <field name="name">Mass Report</field>
+        <field name="model">accounting.mass.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">mass_report_so.mass_report</field>
+        <field name="report_file">mass_report_so.mass_report</field>
+        <field name="binding_model_id" ref="model_accounting_mass_report"/>
+        <field name="paperformat_id" ref="mass_report_so.paperformat_mass_report"/>
+    </record>
+
+</odoo>
