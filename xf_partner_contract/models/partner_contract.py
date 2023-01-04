@@ -263,6 +263,7 @@ class PartnerContract(models.Model):
     trading_rule_id = fields.Many2one('contract.trading.rule', 'Applied trading rule')
     legislation_id = fields.Many2one('contract.legislation', 'Legislation')
     delivery_term_id = fields.Many2one('delivery.terms', 'Delivery Terms')
+    country_id = fields.Many2one('res.country', string="Country of origin")
 
 
 
@@ -307,41 +308,71 @@ class PartnerContract(models.Model):
 
     def action_print(self):
         """Print Contract function"""
-
-        partner = {'name': self.partner_id.name,
-                   'address': self.partner_id.street}
-        product = []
-        currency = self.env.company.currency_id.symbol
-        for line in self.line_ids:
-            pro = {
-                'product_name' : line.product_id.name,
-                'description' : line.name,
-                'quantity': line.quantity,
-                'price': line.price_unit,
-            }
-            product.append(pro)
-        if self.period_f_delivery_end:
-            rec = {
-                'form': self.read()[0],
-                'partner': partner,
-                'type': self.type,
-                'currency_id': currency,
-                'product': product,
-                'date': self.date_start.strftime("%d,%A,%B,%Y"),
-                'period_start': self.period_f_delivery.strftime("%B,%Y"),
-                'period_end': self.period_f_delivery_end.strftime("%B,%Y")
-            }
-        else:
-            rec = {
-                'form': self.read()[0],
-                'partner': partner,
-                'type': self.type,
-                'currency_id': currency,
-                'product': product,
-                'date': self.date_start.strftime("%d,%A,%B,%Y"),
-                'period_start': self.period_f_delivery.strftime("%B,%Y"),
-            }
-        return self.env.ref('xf_partner_contract.action_print_contract').report_action(self, data=rec)
+        # street = self.partner_id.street
+        # street1 = self.partner_id.street2
+        # city = self.partner_id.city
+        # state = self.partner_id.state_id
+        # zip = self.partner_id.zip
+        # country_id = self.partner_id.country_id.name
+        #
+        # partner = {'name': self.partner_id.name,
+        #            }
+        # if street:
+        #     partner.update({
+        #         'street': street
+        #     })
+        # if street1:
+        #     partner.update({
+        #         'street1': street1
+        #     })
+        # if city:
+        #     partner.update({
+        #         'city': city
+        #     })
+        # if state:
+        #     partner.update({
+        #         'state': state.name
+        #     })
+        # if zip:
+        #     partner.update({
+        #         'zip': zip
+        #     })
+        # if country_id:
+        #     partner.update({
+        #         'country_id': country_id
+        #     })
+        # product = []
+        # currency = self.env.company.currency_id.symbol
+        # for line in self.line_ids:
+        #     pro = {
+        #         'product_name' : line.product_id.name,
+        #         'description' : line.name,
+        #         'quantity': line.quantity,
+        #         'price': line.price_unit,
+        #     }
+        #     product.append(pro)
+        # if self.period_f_delivery_end:
+        #     rec = {
+        #         'form': self.read()[0],
+        #         'partner': partner,
+        #         'type': self.type,
+        #         'currency_id': currency,
+        #         'product': product,
+        #         'date': self.date_start.strftime("%d,%A,%B,%Y"),
+        #         'period_start': self.period_f_delivery.strftime("%B,%Y"),
+        #         'period_end': self.period_f_delivery_end.strftime("%B,%Y")
+        #     }
+        # else:
+        #     rec = {
+        #         'form': self.read()[0],
+        #         'partner': partner,
+        #         'type': self.type,
+        #         'currency_id': currency,
+        #         'product': product,
+        #         'date': self.date_start.strftime("%d,%A,%B,%Y"),
+        #         'period_start': self.period_f_delivery.strftime("%B,%Y"),
+        #     }
+        return self.env.ref('xf_partner_contract.action_print_contract').report_action(self)
 
     @api.onchange('contract_amount_type')
     def _onchange_contract_amount_type(self):

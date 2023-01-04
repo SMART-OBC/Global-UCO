@@ -238,6 +238,9 @@
                                 <group>
                                     <field name="sulphur_iv_min_max" nolabel="1"/>
                                 </group>
+                                <group>
+                                    <field name="country_id" style="width:358px;"/>
+                                </group>
                             </group>
                             <group>
                                 <label for="period_f_delivery"/>
