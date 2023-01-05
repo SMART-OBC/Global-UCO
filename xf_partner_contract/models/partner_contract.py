@@ -23,6 +23,8 @@ class PartnerContract(models.Model):
         return res
 
     # Fields
+    sale_report_name = fields.Char()
+    purchase_report_name = fields.Char()
     name = fields.Char(
         string='Name',
         required=True,
@@ -286,8 +288,10 @@ class PartnerContract(models.Model):
                 today_date = today.date().strftime("%d/%m/%Y")
                 if last_seq < 10:
                     vals['name'] = 'G.U.C. %s/0%s' % (str(today_date), str(last_seq))
+                    vals['sale_report_name'] = 'GUC%s/0%s' % (str(today_date), str(last_seq))
                 else:
                     vals['name'] = 'G.U.C. %s/%s' % (str(today_date), str(last_seq))
+                    vals['sale_report_name'] = 'GUC%s/%s' % (str(today_date), str(last_seq))
             if vals.get('type') == 'purchase':
                 contracts = self.env['xf.partner.contract'].search(
                     [('type', '=', 'purchase')])
@@ -302,8 +306,10 @@ class PartnerContract(models.Model):
                 today_date = today.date().strftime("%d/%m/%Y")
                 if last_seq < 10:
                     vals['name'] = 'P.O. %s/0%s' % (str(today_date), str(last_seq))
+                    vals['purchase_report_name'] = 'PO%s/0%s' % (str(today_date), str(last_seq))
                 else:
                     vals['name'] = 'P.O. %s/%s' % (str(today_date), str(last_seq))
+                    vals['purchase_report_name'] = 'PO%s/%s' % (str(today_date), str(last_seq))
         return super(PartnerContract, self).create(vals)
 
     def action_print(self):
