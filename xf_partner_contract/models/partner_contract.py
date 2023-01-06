@@ -23,6 +23,8 @@ class PartnerContract(models.Model):
         return res
 
     # Fields
+    sale_report_name = fields.Char()
+    purchase_report_name = fields.Char()
     name = fields.Char(
         string='Name',
         required=True,
@@ -154,7 +156,7 @@ class PartnerContract(models.Model):
         string='Days Left',
     )
     notes = fields.Text(
-        string='Terms and Conditions',
+        string='Remark',
         help='Write here all supplementary information relative to this contract',
         copy=False,
         readonly=True,
@@ -263,6 +265,7 @@ class PartnerContract(models.Model):
     trading_rule_id = fields.Many2one('contract.trading.rule', 'Applied trading rule')
     legislation_id = fields.Many2one('contract.legislation', 'Legislation')
     delivery_term_id = fields.Many2one('delivery.terms', 'Delivery Terms')
+    country_id = fields.Many2one('res.country', string="Country of origin")
 
 
 
@@ -285,8 +288,10 @@ class PartnerContract(models.Model):
                 today_date = today.date().strftime("%d/%m/%Y")
                 if last_seq < 10:
                     vals['name'] = 'G.U.C. %s/0%s' % (str(today_date), str(last_seq))
+                    vals['sale_report_name'] = 'GUC%s/0%s' % (str(today_date), str(last_seq))
                 else:
                     vals['name'] = 'G.U.C. %s/%s' % (str(today_date), str(last_seq))
+                    vals['sale_report_name'] = 'GUC%s/%s' % (str(today_date), str(last_seq))
             if vals.get('type') == 'purchase':
                 contracts = self.env['xf.partner.contract'].search(
                     [('type', '=', 'purchase')])
@@ -301,47 +306,28 @@ class PartnerContract(models.Model):
                 today_date = today.date().strftime("%d/%m/%Y")
                 if last_seq < 10:
                     vals['name'] = 'P.O. %s/0%s' % (str(today_date), str(last_seq))
+                    vals['purchase_report_name'] = 'PO%s/0%s' % (str(today_date), str(last_seq))
                 else:
                     vals['name'] = 'P.O. %s/%s' % (str(today_date), str(last_seq))
+                    vals['purchase_report_name'] = 'PO%s/%s' % (str(today_date), str(last_seq))
         return super(PartnerContract, self).create(vals)
 
     def action_print(self):
         """Print Contract function"""
-
-        partner = {'name': self.partner_id.name,
-                   'address': self.partner_id.street}
-        product = []
-        currency = self.env.company.currency_id.symbol
-        for line in self.line_ids:
-            pro = {
-                'product_name' : line.product_id.name,
-                'description' : line.name,
-                'quantity': line.quantity,
-                'price': line.price_unit,
-            }
-            product.append(pro)
-        if self.period_f_delivery_end:
-            rec = {
-                'form': self.read()[0],
-                'partner': partner,
-                'type': self.type,
-                'currency_id': currency,
-                'product': product,
-                'date': self.date_start.strftime("%d,%A,%B,%Y"),
-                'period_start': self.period_f_delivery.strftime("%B,%Y"),
-                'period_end': self.period_f_delivery_end.strftime("%B,%Y")
-            }
-        else:
-            rec = {
-                'form': self.read()[0],
-                'partner': partner,
-                'type': self.type,
-                'currency_id': currency,
-                'product': product,
-                'date': self.date_start.strftime("%d,%A,%B,%Y"),
-                'period_start': self.period_f_delivery.strftime("%B,%Y"),
-            }
-        return self.env.ref('xf_partner_contract.action_print_contract').report_action(self, data=rec)
+        if not self.sale_report_name or self.purchase_report_name:
+            contract_date = self.create_date
+            today_date = contract_date.date().strftime("%d/%m/%Y")
+            if self.type == 'sale':
+                if self.name_seq_no < 10:
+                    self.sale_report_name = 'GUC%s/0%s' % (str(today_date), str(self.name_seq_no))
+                if self.name_seq_no > 10:
+                    self.sale_report_name = 'GUC%s/%s' % (str(today_date), str(self.name_seq_no))
+            if self.type == 'purchase':
+                if self.name_seq_no < 10:
+                    self.sale_report_name = 'PO%s/0%s' % (str(today_date), str(self.name_seq_no))
+                if self.name_seq_no > 10:
+                    self.sale_report_name = 'PO%s/%s' % (str(today_date), str(self.name_seq_no))
+        return self.env.ref('xf_partner_contract.action_print_contract').report_action(self)
 
     @api.onchange('contract_amount_type')
     def _onchange_contract_amount_type(self):

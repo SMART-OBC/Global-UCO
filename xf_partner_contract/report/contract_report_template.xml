@@ -3,6 +3,7 @@
     <data>
         <template id="custom_contract_layout">
             <div class="header">
+                <t t-set="docs" t-value="docs.with_context(lang=lang)"/>
                 <div class="row">
                     <div class="head_cont">
                     </div>
@@ -11,11 +12,6 @@
                              t-att-src="image_data_uri(res_company.logo)"
                              alt="logo"
                              style="height:50px; width:150px; position: absolute; right: 25mm; top:0mm;"/>
-
-                        <span class="company_address"
-                              t-field="res_company.partner_id"
-                              t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
-                              style="text-align:center; position: absolute; right: 40mm; top:20mm;"/>
                     </div>
                 </div>
             </div>
@@ -31,7 +27,7 @@
                                 <em style="font-style: normal;font-size: 1.5rem; text-align:center; font-weight: 900; color: #69C;">
                                     THE
                                 </em>
-                                <em style="font-style: normal;font-size: 1.5rem; text-align:center; font-weight: 900; color: #50c878;">
+                                <em style="font-style:Start normal;font-size: 1.5rem; text-align:center; font-weight: 900; color: #50c878;">
                                     SUSTAINABLE
                                 </em>
                                 <br/>
@@ -49,7 +45,7 @@
                             <br/>
                             DUTCH CARIBBEAN
                         </div>
-                        <div class="col-3" style="position: absolute; left: 604px; top: 3px;">
+                        <div class="col-4" style="position: absolute; left: 604px; top: 0px; width:900px;">
                             <em style="font-style: normal; text-align:center; font-weight: 701; color: #69C;">CAMBER OF
                                 COMMERCE:
                             </em>
@@ -67,10 +63,10 @@
                             <br/>
                             INFO@GLOBALUCOCOMPANY.COM
                         </div>
-                        <div class="col-3" style="position: absolute; right: 0px; top: 6px;">
-                            <img src="/xf_partner_contract/static/description/niwo.png" width="100px" height="auto"
-                                 style="padding-right: 12px;"/>
-                            <img src="/xf_partner_contract/static/description/ISCC.png" width="100px" height="auto"
+                        <div class="logo" style="position: absolute; right: 80px; top: 6px;">
+                            <img src="/xf_partner_contract/static/description/niwo.png" width="110px" height="auto"
+                                 style="padding-right: 26px;"/>
+                            <img src="/xf_partner_contract/static/description/ISCC.png" width="160px" height="auto"
                                  style="padding-left: 12px;"/>
                         </div>
                         <hr width="100%"
@@ -86,10 +82,35 @@
         </template>
 
         <template id="first_product">
-            <div class="text-left">
+            <t t-set="result" t-value="result.with_context(lang=lang)"/>
+            <t t-set="docs" t-value="docs.with_context(lang=lang)"/>
+            <div class="text-left" style="margin-left: 150mm; margin-top: 30mm; line-height:1.5; margin-right:40mm;">
+                <div>
+                    <t t-esc="docs.partner_id.name"/>
+                </div>
+                <div>
+                    <t t-if="docs.partner_id.street">
+                        <t t-esc="docs.partner_id.street"/>
+                    </t>
+                    <t t-if="docs.partner_id.city">
+                        <t t-esc="docs.partner_id.city"/>,
+                    </t>
+                    <t t-if="docs.partner_id.state_id">
+                        <t t-esc="docs.partner_id.state_id.name"/>,
+                    </t>
+                    <t t-if="docs.partner_id.zip">
+                        <t t-esc="docs.partner_id.zip"/>,
+                    </t>
+                    <t t-if="docs.partner_id.country_id">
+                        <t t-esc="docs.partner_id.country_id.name"/>
+                    </t>
+                </div>
+            </div>
+
+            <div class="text-left" style="margin-left:20mm; margin-right:20mm; margin-top:15mm;">
                 <h2>
-                    <t t-if="type =='sale'">
-                        Sale Order
+                    <t t-if="docs.type =='sale'">
+                        Sales order
                     </t>
                     <t t-else="">
                         Purchase order
@@ -97,21 +118,21 @@
                 </h2>
             </div>
 
-            <div class="text-left">
+            <div class="text-left" style="margin-left:20mm; margin-right:20mm;">
 
-                <t t-if="form['date_start']">
+                <t t-if="docs.date_start">
                     <div>
-                        <label style="width:195px;">
-                            Start Date
+                        <label style="width:240px;">
+                            Date
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="date"/>
+                        <t t-esc="docs.date_start.strftime('%A, %B %d, %Y')"/>
                     </div>
                 </t>
-                <t t-if="form['name']">
+                <t t-if="docs.name">
                     <div>
-                        <label style="width:195px;">
-                            <t t-if="type =='sale'">
+                        <label style="width:240px;">
+                            <t t-if="docs.type =='sale'">
                                 S.O. number
                             </t>
                             <t t-else="">
@@ -119,188 +140,217 @@
                             </t>
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['name']"/>
+                        <t t-if="docs.type =='sale'">
+                            <t t-esc="docs.sale_report_name"/>
+                        </t>
+                        <t t-else="">
+                            <t t-esc="docs.purchase_report_name"/>
+                        </t>
                     </div>
                 </t>
-                <span style="font-weight: bold;">
+                <div style="font-weight: bold; padding-top:18px;">
                     Specification
-                </span>
-                <div>
-                    <label>
-                        product
+                </div>
+                <div style="padding-top:8px;">
+                    <label style="width:240px;">
+                        Product
                     </label>
-                    <span style="padding-left:137px;">
+                    <span>
                         :&amp;nbsp;
-                        <t t-esc="result['product_name']"/>
+                        <t t-esc="result.product_id.name"/>
                     </span>
-                    <t t-if="result['description']">
-                        <div style="padding-left:205px;">
-                            <t t-esc="result['description']"/>
+                    <t t-if="result.name">
+                        <div style="padding-left:255px;">
+                            <t t-esc="result.name"/>
                         </div>
                     </t>
-
-                    <!--                    <div style="padding-left:205px;">-->
-                    <!--                            HS code:-->
-                    <!--                            &amp;nbsp;-->
-                    <!--                            <t t-esc="result['hs_code']"/>-->
-                    <!--                    </div>-->
                 </div>
-                <t t-if="form['ffa']">
+                <t t-if="docs.ffa">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px; padding-top:6px;">
                             FFA
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['ffa']"/>
+                            <t t-esc="docs.ffa"/>
                         </label>
-                        <t t-esc="form['ffa_min_max']"/>
+                        <t t-esc="docs.ffa_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['m_and_i']">
+                <t t-if="docs.m_and_i">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             M&amp;I
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['m_and_i']"/>
+                            <t t-esc="docs.m_and_i"/>
                         </label>
-                        <t t-esc="form['m_and_i_min_max']"/>
+                        <t t-esc="docs.m_and_i_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['iv']">
+                <t t-if="docs.iv">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             IV
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['iv']"/>
+                            <t t-esc="docs.iv"/>
                         </label>
-                        <t t-esc="form['iv_min_max']"/>
+                        <t t-esc="docs.iv_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['sulphur']">
+                <t t-if="docs.sulphur">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Sulphur
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['sulphur']"/>
+                            <t t-esc="docs.sulphur"/>
                         </label>
-                        <t t-esc="form['sulphur_iv_min_max']"/>
+                        <t t-esc="docs.sulphur_iv_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['appearance']">
+                <t t-if="docs.country_id">
                     <div>
-                        <label style="width:193px;">
-                            Appearance
+                        <label style="width:240px;">
+                            Country of origin
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['appearance']"/>
+                        <t t-esc="docs.country_id.name"/>
+                    </div>
+                </t>
+                <t t-if="docs.appearance">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Appearance
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.appearance"/>
+
+                        </div>
                     </div>
                 </t>
                 <div>
-                    <label style="width:193px;">
+                    <label style="width:240px;margin-bottom: 0rem;">
                         Prohibited materials
                     </label>
                     :&amp;nbsp;
                     Distillation's residues, acids oil, detergents, waxes, mineral oil,
-                    esters, industrial chemicals, animal fat or
-                    <span style="padding-left:200px;">
-                        any material of unknown origin (which in itself is unsuitable to produce
+                    <br/>
+                    <label style="padding-left:255px; margin-bottom: 0rem;">
+                        esters, industrial chemicals, animal fat or any material of unknown origin (which in itself is
+                        unsuitable to produce
                         biofuel)
-                    </span>
+                    </label>
                 </div>
-                <span style="font-weight: bold; padding-top:30px;">
+                <div style="font-weight: bold; padding-top:18px;">
                     Commercial terms
-                </span>
+                </div>
                 <!--                                    <t t-if="form['amount']">-->
-                <div>
-                    <label style="width:193px;">
+                <div style="padding-top:10px;">
+                    <label style="width:240px;">
                         Price per MT
                     </label>
                     :&amp;nbsp;
-                    <t t-esc="result['price']"/>
+                    <t t-esc="result.price_unit"/>
                     &amp;nbsp;
-                    <t t-esc="form['currency_id'][1]"/>
+                    <t t-esc="docs.currency_id.name"/>
                 </div>
                 <div>
-                    <label style="width:193px;">
+                    <label style="width:240px;">
                         Quantity
                     </label>
                     :&amp;nbsp;
-                    <t t-esc="result['quantity']"/>
+                    <t t-esc="result.quantity"/>&amp;nbsp;MT +/- 5% weight difference allowed
                 </div>
-                <t t-if="form['packaging']">
-                    <div>
-                        <label style="width:193px;">
-                            Packaging
-                        </label>
-                        :&amp;nbsp;
-                        <t t-esc="form['packaging']"/>
+                <t t-if="docs.packaging">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Packaging
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.packaging"/>
+                        </div>
                     </div>
                 </t>
-                <t t-if="form['expected_containers']">
-                    <div>
-                        <label style="width:193px;">
-                            Expected amount of containers
-                        </label>
-                        :&amp;nbsp;
-                        <t t-esc="form['expected_containers']"/>
+                <t t-if="docs.expected_containers">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Expected amount of containers
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.expected_containers"/>
+
+                        </div>
                     </div>
                 </t>
-                <t t-if="form['notes']">
-                    <div>
-                        <label style="width:193px;">
-                            Delivery terms
-                        </label>
-                        :&amp;nbsp;
-                        <t t-esc="form['notes']"/>
+                <t t-if="docs.delivery_term_id">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Delivery terms
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.delivery_term_id.name"/>
+                        </div>
                     </div>
                 </t>
-                <t t-if="form['period_f_delivery']">
+                <t t-if="docs.period_f_delivery">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Period of shipment and delivery
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="period_start"/>
-                        &amp;nbsp; to &amp;nbsp;
-                        <t t-esc="period_end"/>
+                        <t t-esc="docs.period_f_delivery.strftime('%B,%Y')"/>
+                        <t t-if="docs.period_f_delivery_end">
+                            &amp;nbsp; to &amp;nbsp;
+                            <t t-esc="docs.period_f_delivery_end.strftime('%B,%Y')"/>
+                        </t>
                     </div>
                 </t>
-                <t t-if="form['payment_term_id']">
+                <t t-if="docs.payment_term_id">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Payment terms
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['payment_term_id'][1]"/>
+                        <t t-esc="docs.payment_term_id.name"/>
                     </div>
                 </t>
-                <t t-if="form['trading_rule_id']">
+                <t t-if="docs.trading_rule_id">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Applied trading rules
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['trading_rule_id'][1]"/>
+                        <t t-esc="docs.trading_rule_id.name"/>
                     </div>
                 </t>
-                <t t-if="form['legislation_id']">
+                <t t-if="docs.legislation_id">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Legislation
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['legislation_id'][1]"/>
+                        <t t-esc="docs.legislation_id.name"/>
                     </div>
                 </t>
                 <div style="padding-top:10px;">
@@ -311,119 +361,152 @@
                     purchase
                     order is still lawfully binding.
                 </div>
-                <span style="font-weight: bold;">
+                <div style="font-weight: bold; padding-top:18px;">
                     Discount clause
-                </span>
-                <div>
+                </div>
+                <div style="padding-top:8px;">
                     In the even the agreed upon values are exceeded a discount is applicable
                     according to
                     below numbers and percentages.
                 </div>
-                <t t-if="form['ffa']">
-                    <div>
-                        <label style="width:193px;">
+                <t t-if="docs.ffa">
+                    <div style="padding-top:3px;">
+                        <label style="width:240px;">
                             FFA
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['ffa_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.ffa_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['ffa']"/>
+                                <t t-esc="docs.ffa"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['ffa']"/>
+                                <t t-esc="docs.ffa"/>
                             </t>
                         </label>
                         1% discount per 1 % off spec
                     </div>
                 </t>
-                <t t-if="form['m_and_i']">
+                <t t-if="docs.m_and_i">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             M&amp;I
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['m_and_i_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.m_and_i_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['m_and_i']"/>
+                                <t t-esc="docs.m_and_i"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['m_and_i']"/>
+                                <t t-esc="docs.m_and_i"/>
                             </t>
                         </label>
                         1% discount per 1 % off spec
                     </div>
                 </t>
-                <t t-if="form['iv']">
+                <t t-if="docs.iv">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Iodine Value
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['iv_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.iv_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['iv']"/>
+                                <t t-esc="docs.iv"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['iv']"/>
+                                <t t-esc="docs.iv"/>
                             </t>
                         </label>
                         1 USD discount per point off spec
                     </div>
                 </t>
-                <t t-if="form['sulphur']">
+                <t t-if="docs.sulphur">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Sulphur
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['sulphur_iv_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.sulphur_iv_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['sulphur']"/>
+                                <t t-esc="docs.sulphur"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['sulphur']"/>
+                                <t t-esc="docs.sulphur"/>
                             </t>
                         </label>
                         1 USD discount per point off spec
                     </div>
                 </t>
+                <t t-if="docs.notes">
+                    <div style="font-weight: bold; padding-top:18px;">
+                        Remarks
+                    </div>
+                    <div style="padding-top:5px;">
+                        <t t-esc="docs.notes"/>
+                    </div>
+                </t>
+
             </div>
         </template>
 
-
         <template id="no_product_line">
-            <div class="text-left">
+            <t t-set="docs" t-value="docs.with_context(lang=lang)"/>
+                        <div class="text-left" style="margin-left: 150mm; margin-top: 30mm; line-height:1.5; margin-right:40mm;">
+                <div>
+                    <t t-esc="docs.partner_id.name"/>
+                </div>
+                <div>
+                    <t t-if="docs.partner_id.street">
+                        <t t-esc="docs.partner_id.street"/>
+                    </t>
+                    <t t-if="docs.partner_id.city">
+                        <t t-esc="docs.partner_id.city"/>,
+                    </t>
+                    <t t-if="docs.partner_id.state_id">
+                        <t t-esc="docs.partner_id.state_id.name"/>,
+                    </t>
+                    <t t-if="docs.partner_id.zip">
+                        <t t-esc="docs.partner_id.zip"/>,
+                    </t>
+                    <t t-if="docs.partner_id.country_id">
+                        <t t-esc="docs.partner_id.country_id.name"/>
+                    </t>
+                </div>
+            </div>
+            <div class="text-left" style="margin-left:20mm; margin-right:20mm; margin-top:20mm;">
                 <h2>
-                    <t t-if="type =='sale'">
-                        Sale Order
+                    <t t-if="docs.type =='sale'">
+                        Sales Order
                     </t>
                     <t t-else="">
                         Purchase order
                     </t>
                 </h2>
             </div>
-            <div class="text-left">
-                <t t-if="form['date_start']">
+
+            <div class="text-left" style="margin-left:20mm; margin-right:20mm;">
+
+                <t t-if="docs.date_start">
                     <div>
-                        <label style="width:195px;">
-                            Start Date
+                        <label style="width:240px;">
+                            Date
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="date"/>
+                        <t t-esc="docs.date_start.strftime('%A, %B %d, %Y')"/>
                     </div>
                 </t>
-                <t t-if="form['name']">
+                <t t-if="docs.name">
                     <div>
-                        <label style="width:195px;">
-                            <t t-if="type =='sale'">
+                        <label style="width:240px;">
+                            <t t-if="docs.type =='sale'">
                                 S.O. number
                             </t>
                             <t t-else="">
@@ -431,155 +514,188 @@
                             </t>
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['name']"/>
+                        <t t-if="docs.type =='sale'">
+                            <t t-esc="docs.sale_report_name"/>
+                        </t>
+                        <t t-else="">
+                            <t t-esc="docs.purchase_report_name"/>
+                        </t>
                     </div>
                 </t>
-                <span style="font-weight: bold;">
+                <div style="font-weight: bold; padding-top:18px;">
                     Specification
-                </span>
-                <t t-if="form['ffa']">
+                </div>
+                <t t-if="docs.ffa">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px; padding-top:6px;">
                             FFA
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['ffa']"/>
+                            <t t-esc="docs.ffa"/>
                         </label>
-                        <t t-esc="form['ffa_min_max']"/>
+                        <t t-esc="docs.ffa_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['m_and_i']">
+                <t t-if="docs.m_and_i">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             M&amp;I
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['m_and_i']"/>
+                            <t t-esc="docs.m_and_i"/>
                         </label>
-                        <t t-esc="form['m_and_i_min_max']"/>
+                        <t t-esc="docs.m_and_i_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['iv']">
+                <t t-if="docs.iv">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             IV
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['iv']"/>
+                            <t t-esc="docs.iv"/>
                         </label>
-                        <t t-esc="form['iv_min_max']"/>
+                        <t t-esc="docs.iv_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['sulphur']">
+                <t t-if="docs.sulphur">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Sulphur
                         </label>
                         :&amp;nbsp;
-                        <label style="width:150px;">
+                        <label style="width:135px;">
                             &amp;nbsp;
-                            <t t-esc="form['sulphur']"/>
+                            <t t-esc="docs.sulphur"/>
                         </label>
-                        <t t-esc="form['sulphur_iv_min_max']"/>
+                        <t t-esc="docs.sulphur_iv_min_max"/>
                     </div>
                 </t>
-                <t t-if="form['appearance']">
+                <t t-if="docs.country_id">
                     <div>
-                        <label style="width:193px;">
-                            Appearance
+                        <label style="width:240px;">
+                            Country of origin
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['appearance']"/>
+                        <t t-esc="docs.country_id.name"/>
+                    </div>
+                </t>
+                <t t-if="docs.appearance">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Appearance
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.appearance"/>
+                        </div>
                     </div>
                 </t>
                 <div>
-                    <label style="width:193px;">
+                    <label style="width:240px;margin-bottom: 0rem;">
                         Prohibited materials
                     </label>
                     :&amp;nbsp;
                     Distillation's residues, acids oil, detergents, waxes, mineral oil,
-                    esters, industrial chemicals, animal fat or
-                    <span style="padding-left:200px;">
-                        any material of unknown origin (which in itself is unsuitable to produce
+                    <br/>
+                    <label style="padding-left:255px; margin-bottom: 0rem;">
+                        esters, industrial chemicals, animal fat or any material of unknown origin (which in itself is
+                        unsuitable to produce
                         biofuel)
-                    </span>
+                    </label>
                 </div>
-                <span style="font-weight: bold; padding-top:30px;">
+                <div style="font-weight: bold; padding-top:18px;">
                     Commercial terms
-                </span>
-                <t t-if="form['packaging']">
-                    <div>
-                        <label style="width:193px;">
-                            Packaging
-                        </label>
-                        :&amp;nbsp;
-                        <t t-esc="form['packaging']"/>
+                </div>
+                <t t-if="docs.packaging">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Packaging
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.packaging"/>
+                        </div>
                     </div>
                 </t>
-                <t t-if="form['expected_containers']">
-                    <div>
-                        <label style="width:193px;">
-                            Expected amount of containers
-                        </label>
-                        :&amp;nbsp;
-                        <t t-esc="form['expected_containers']"/>
+                <t t-if="docs.expected_containers">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Expected amount of containers
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.expected_containers"/>
+
+                        </div>
                     </div>
                 </t>
-                <t t-if="form['notes']">
-                    <div>
-                        <label style="width:193px;">
-                            Delivery terms
-                        </label>
-                        :&amp;nbsp;
-                        <t t-esc="form['notes']"/>
+                <t t-if="docs.delivery_term_id">
+                    <div class="row mx-0">
+                        <div>
+                            <label style="width:240px;">
+                                Delivery terms
+                            </label>
+                            :&amp;nbsp;
+                        </div>
+                        <div class="col-8 px-0 pl-1">
+                            <t t-esc="docs.delivery_term_id.name"/>
+                        </div>
                     </div>
                 </t>
-                <t t-if="form['period_f_delivery']">
+                <t t-if="docs.period_f_delivery">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Period of shipment and delivery
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="period_start"/>
-                        &amp;nbsp; to &amp;nbsp;
-                        <t t-esc="period_end"/>
-
+                        <t t-esc="docs.period_f_delivery.strftime('%B,%Y')"/>
+                        <t t-if="docs.period_f_delivery_end">
+                            &amp;nbsp; to &amp;nbsp;
+                            <t t-esc="docs.period_f_delivery_end.strftime('%B,%Y')"/>
+                        </t>
                     </div>
                 </t>
-                <t t-if="form['payment_term_id']">
+                <t t-if="docs.payment_term_id">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Payment terms
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['payment_term_id'][1]"/>
+                        <t t-esc="docs.payment_term_id.name"/>
                     </div>
                 </t>
-                <t t-if="form['trading_rule_id']">
+                <t t-if="docs.trading_rule_id">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Applied trading rules
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['trading_rule_id'][1]"/>
+                        <t t-esc="docs.trading_rule_id.name"/>
                     </div>
                 </t>
-                <t t-if="form['legislation_id']">
+                <t t-if="docs.legislation_id">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Legislation
                         </label>
                         :&amp;nbsp;
-                        <t t-esc="form['legislation_id'][1]"/>
+                        <t t-esc="docs.legislation_id.name"/>
                     </div>
                 </t>
-                <div style="padding-top:30px;">
+                <div style="padding-top:10px;">
                     In deviation from the NOFOTA trading rules, when the buyer can show irrevocable
                     proof of
                     payment and the payment is not
@@ -587,88 +703,96 @@
                     purchase
                     order is still lawfully binding.
                 </div>
-                <span style="font-weight: bold;">
+                <div style="font-weight: bold; padding-top:18px;">
                     Discount clause
-                </span>
-                <div>
+                </div>
+                <div style="padding-top:8px;">
                     In the even the agreed upon values are exceeded a discount is applicable
                     according to
                     below numbers and percentages.
                 </div>
-                <t t-if="form['ffa']">
-                    <div>
-                        <label style="width:193px;">
+                <t t-if="docs.ffa">
+                    <div style="padding-top:3px;">
+                        <label style="width:240px;">
                             FFA
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['ffa_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.ffa_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['ffa']"/>
+                                <t t-esc="docs.ffa"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['ffa']"/>
+                                <t t-esc="docs.ffa"/>
                             </t>
                         </label>
                         1% discount per 1 % off spec
                     </div>
                 </t>
-                <t t-if="form['m_and_i']">
+                <t t-if="docs.m_and_i">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             M&amp;I
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['m_and_i_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.m_and_i_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['m_and_i']"/>
+                                <t t-esc="docs.m_and_i"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['m_and_i']"/>
+                                <t t-esc="docs.m_and_i"/>
                             </t>
                         </label>
                         1% discount per 1 % off spec
                     </div>
                 </t>
-                <t t-if="form['iv']">
+                <t t-if="docs.iv">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Iodine Value
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['iv_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.iv_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['iv']"/>
+                                <t t-esc="docs.iv"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['iv']"/>
+                                <t t-esc="docs.iv"/>
                             </t>
                         </label>
                         1 USD discount per point off spec
                     </div>
                 </t>
-                <t t-if="form['sulphur']">
+                <t t-if="docs.sulphur">
                     <div>
-                        <label style="width:193px;">
+                        <label style="width:240px;">
                             Sulphur
                         </label>
                         :&amp;nbsp;
-                        <label style="width:193px;">
-                            <t t-if="form['sulphur_iv_min_max']=='min'">
+                        <label style="width:135px;">
+                            <t t-if="docs.sulphur_iv_min_max=='min'">
                                 Below&amp;nbsp;
-                                <t t-esc="form['sulphur']"/>
+                                <t t-esc="docs.sulphur"/>
                             </t>
                             <t t-else="">
                                 Above&amp;nbsp;
-                                <t t-esc="form['sulphur']"/>
+                                <t t-esc="docs.sulphur"/>
                             </t>
                         </label>
                         1 USD discount per point off spec
+                    </div>
+                </t>
+                <t t-if="docs.notes">
+                    <div style="font-weight: bold; padding-top:18px;">
+                        Remarks
+                    </div>
+                    <div style="padding-top:5px;">
+                        <t t-esc="docs.notes"/>
                     </div>
                 </t>
             </div>
@@ -676,53 +800,73 @@
 
         <template id="contract_report_template">
             <t t-call="web.html_container">
-                <t t-call="xf_partner_contract.custom_contract_layout">
+                <t t-set="lang" t-value="en_US"/>
+                <t t-call="xf_partner_contract.custom_contract_layout" t-lang="lang">
                     <div class="page" style="background-image:url('/xf_partner_contract/static/description/back.jpg');
-                        background-size:250mm 280mm; width:250mm; height:255mm; padding-top:0mm;">
-                        <t t-if="product">
+                        background-size:235mm 285mm; width:235mm; height:285mm; padding-top:0mm; font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:1; font-size: .9rem;">
+                        <t t-if="docs.line_ids">
                             <t t-set="j" t-value="1"/>
-                            <t t-foreach="product" t-as="result">
+                            <t t-foreach="docs.line_ids" t-as="result">
                                 <t t-if="j==1">
-                                    <t t-call="xf_partner_contract.first_product"/>
+                                    <t t-call="xf_partner_contract.first_product" t-lang="lang"/>
                                 </t>
                                 <t t-if="j>1">
-                                    <div class="page" style="background-image:url('/xf_partner_contract/static/description/back.jpg');
-                                    background-size:250mm 280mm; width:250mm; height:255mm; padding-top:5mm;">
-                                        <t t-call="xf_partner_contract.first_product"/>
+                                    <div class="page" style="page-break-before:always;
+                                        background-image:url('/xf_partner_contract/static/description/back.jpg');
+                                        background-size:235mm 285mm; width:235mm; height:285mm; padding-top:0mm; font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:1; font-size: .9rem;">
+                                        <t t-call="xf_partner_contract.first_product" t-lang="lang"/>
                                     </div>
                                 </t>
                                 <t t-set="j" t-value="j + 1"/>
                             </t>
                         </t>
                         <t t-else="">
-                            <t t-call="xf_partner_contract.no_product_line"/>
+                            <t t-call="xf_partner_contract.no_product_line" t-lang="lang"/>
                         </t>
                         <div class="row" style="page-break-before:always;
                                         background-image:url('/xf_partner_contract/static/description/back.jpg');
-                                        background-size:250mm 280mm; width:250mm; height:255mm; padding-top:0mm;">
-                            <div class="text-left" style="padding-left:30px;">
-                                <div style="font-weight: bold; font-size: 26px;">
+                                        background-size:240mm 285mm; width:240mm; height:285mm; padding-top:0mm;">
+
+                            <div class="text-left"
+                                 style="font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:2; margin-left:20mm; margin-right:20mm; margin-top:10mm;">
+                                <div style="font-weight: bold; font-size: 23px;">
                                     Documents to be provided by seller
                                 </div>
-                                <div style="font-size: 26px;">
+                                <div style="padding-top:8px;">
                                     - Commercial invoice
                                 </div>
-                                <div style="font-size: 26px;">
+                                <div>
                                     - Annex VII
                                 </div>
-                                <div style="font-size: 26px;">
-                                    - Green list waste contract
+                                <div>
+                                    - Self-declaration; Feedstock is Used Cooking Oil (UCO) of Virgin Vegetable Oil
+                                    (VVO) origin
                                 </div>
-                                <div style="font-size: 26px;">
+                                <div>
                                     - ISCC EU Delivery note
                                 </div>
-                                <div style="font-size: 26px;">
+                                <div>
+                                    - Packing list
+                                </div>
+                                <div>
+                                    - Marine insurance certificate for 110% cargo value covering “All Risks”
+                                </div>
+                                <div>
                                     - B/L copy, marked freight prepaid inc ship. on board stamped, telex or
                                     seaway bill
                                 </div>
+                                <div>
+                                    - Weight tickets of each container
+                                </div>
+                                <div>
+                                    - Picture form each load iso or flexi-bag (tank number)
+                                </div>
+                                <div>
+                                    - EUR1 certificate
+                                </div>
                                 <br/>
                                 <br/>
-                                <div style="font-size: 26px;">
+                                <div>
                                     We kindly ask you to return a legally signed copy of this contract to us by
                                     e-mail.
                                     In case we don’t receive the legally signed copy of this contract within 2
@@ -730,10 +874,10 @@
                                     days after contract date, we will take this contract as a final acceptance
                                     of the conditions mentioned.
                                 </div>
-                                <div class="row" style="padding-top:50px; font-size: 23px;">
+                                <div class="row" style="padding-top:50px;">
                                     <div class="col-6">
                                         <div>
-                                            <t t-if="type =='sale'">
+                                            <t t-if="docs.type =='sale'">
                                                 Seller:&amp;nbsp;
                                                 <t t-esc="res_company.name"/>
                                             </t>
@@ -752,13 +896,13 @@
                                     </div>
                                     <div class="col-6">
                                         <div>
-                                            <t t-if="type =='sale'">
+                                            <t t-if="docs.type =='sale'">
                                                 Buyer:
-                                                <t t-esc="partner['name']"/>
+                                                <t t-esc="docs.partner_id.name"/>
                                             </t>
                                             <t t-else="">
                                                 Seller:&amp;nbsp;
-                                                <t t-esc="partner['name']"/>
+                                                <t t-esc="docs.partner_id.name"/>
                                             </t>
                                         </div>
                                         <div>
