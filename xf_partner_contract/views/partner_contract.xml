@@ -297,7 +297,7 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page name="notes" string="Terms and Conditions">
+                            <page name="notes" string="Remarks">
                                 <group>
 
                                     <field name="notes"

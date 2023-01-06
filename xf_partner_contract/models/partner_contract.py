@@ -156,7 +156,7 @@ class PartnerContract(models.Model):
         string='Days Left',
     )
     notes = fields.Text(
-        string='Terms and Conditions',
+        string='Remark',
         help='Write here all supplementary information relative to this contract',
         copy=False,
         readonly=True,
@@ -314,70 +314,19 @@ class PartnerContract(models.Model):
 
     def action_print(self):
         """Print Contract function"""
-        # street = self.partner_id.street
-        # street1 = self.partner_id.street2
-        # city = self.partner_id.city
-        # state = self.partner_id.state_id
-        # zip = self.partner_id.zip
-        # country_id = self.partner_id.country_id.name
-        #
-        # partner = {'name': self.partner_id.name,
-        #            }
-        # if street:
-        #     partner.update({
-        #         'street': street
-        #     })
-        # if street1:
-        #     partner.update({
-        #         'street1': street1
-        #     })
-        # if city:
-        #     partner.update({
-        #         'city': city
-        #     })
-        # if state:
-        #     partner.update({
-        #         'state': state.name
-        #     })
-        # if zip:
-        #     partner.update({
-        #         'zip': zip
-        #     })
-        # if country_id:
-        #     partner.update({
-        #         'country_id': country_id
-        #     })
-        # product = []
-        # currency = self.env.company.currency_id.symbol
-        # for line in self.line_ids:
-        #     pro = {
-        #         'product_name' : line.product_id.name,
-        #         'description' : line.name,
-        #         'quantity': line.quantity,
-        #         'price': line.price_unit,
-        #     }
-        #     product.append(pro)
-        # if self.period_f_delivery_end:
-        #     rec = {
-        #         'form': self.read()[0],
-        #         'partner': partner,
-        #         'type': self.type,
-        #         'currency_id': currency,
-        #         'product': product,
-        #         'date': self.date_start.strftime("%d,%A,%B,%Y"),
-        #         'period_start': self.period_f_delivery.strftime("%B,%Y"),
-        #         'period_end': self.period_f_delivery_end.strftime("%B,%Y")
-        #     }
-        # else:
-        #     rec = {
-        #         'form': self.read()[0],
-        #         'partner': partner,
-        #         'type': self.type,
-        #         'currency_id': currency,
-        #         'product': product,
-        #         'date': self.date_start.strftime("%d,%A,%B,%Y"),
-        #         'period_start': self.period_f_delivery.strftime("%B,%Y"),
-        #     }
+        if not self.sale_report_name or self.purchase_report_name:
+            contract_date = self.create_date
+            today_date = contract_date.date().strftime("%d/%m/%Y")
+            if self.type == 'sale':
+                if self.name_seq_no < 10:
+                    self.sale_report_name = 'GUC%s/0%s' % (str(today_date), str(self.name_seq_no))
+                if self.name_seq_no > 10:
+                    self.sale_report_name = 'GUC%s/%s' % (str(today_date), str(self.name_seq_no))
+            if self.type == 'purchase':
+                if self.name_seq_no < 10:
+                    self.sale_report_name = 'PO%s/0%s' % (str(today_date), str(self.name_seq_no))
+                if self.name_seq_no > 10:
+                    self.sale_report_name = 'PO%s/%s' % (str(today_date), str(self.name_seq_no))
         return self.env.ref('xf_partner_contract.action_print_contract').report_action(self)
 
     @api.onchange('contract_amount_type')

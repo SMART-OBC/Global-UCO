@@ -12,23 +12,6 @@
                              t-att-src="image_data_uri(res_company.logo)"
                              alt="logo"
                              style="height:50px; width:150px; position: absolute; right: 25mm; top:0mm;"/>
-                        <div class="partner" style="position: absolute; right: 40mm; top:20mm; width:220px;">
-                            <div>
-                                <t t-esc="docs.partner_id.name"/>
-                            </div>
-                            <div>
-                                <t t-esc="docs.partner_id.street"/>
-                                <t t-if="docs.partner_id.city">
-                                    ,
-                                    <t t-esc="docs.partner_id.city"/>
-                                    <br/>
-                                    <t t-esc="docs.partner_id.state_id.name"/>,
-                                    <t t-esc="docs.partner_id.zip"/>
-                                    <br/>
-                                    <t t-esc="docs.partner_id.country_id.name"/>
-                                </t>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -101,7 +84,30 @@
         <template id="first_product">
             <t t-set="result" t-value="result.with_context(lang=lang)"/>
             <t t-set="docs" t-value="docs.with_context(lang=lang)"/>
-            <div class="text-left" style="margin-left:20mm; margin-right:20mm;">
+            <div class="text-left" style="margin-left: 150mm; margin-top: 30mm; line-height:1.5; margin-right:40mm;">
+                <div>
+                    <t t-esc="docs.partner_id.name"/>
+                </div>
+                <div>
+                    <t t-if="docs.partner_id.street">
+                        <t t-esc="docs.partner_id.street"/>
+                    </t>
+                    <t t-if="docs.partner_id.city">
+                        <t t-esc="docs.partner_id.city"/>,
+                    </t>
+                    <t t-if="docs.partner_id.state_id">
+                        <t t-esc="docs.partner_id.state_id.name"/>,
+                    </t>
+                    <t t-if="docs.partner_id.zip">
+                        <t t-esc="docs.partner_id.zip"/>,
+                    </t>
+                    <t t-if="docs.partner_id.country_id">
+                        <t t-esc="docs.partner_id.country_id.name"/>
+                    </t>
+                </div>
+            </div>
+
+            <div class="text-left" style="margin-left:20mm; margin-right:20mm; margin-top:20mm;">
                 <h2>
                     <t t-if="docs.type =='sale'">
                         Sales order
@@ -439,12 +445,43 @@
                         1 USD discount per point off spec
                     </div>
                 </t>
+                <t t-if="docs.notes">
+                    <div style="font-weight: bold; padding-top:18px;">
+                        Remarks
+                    </div>
+                    <div style="padding-top:5px;">
+                        <t t-esc="docs.notes"/>
+                    </div>
+                </t>
+
             </div>
         </template>
 
         <template id="no_product_line">
             <t t-set="docs" t-value="docs.with_context(lang=lang)"/>
-            <div class="text-left" style="margin-left:20mm; margin-right:20mm;">
+                        <div class="text-left" style="margin-left: 150mm; margin-top: 30mm; line-height:1.5; margin-right:40mm;">
+                <div>
+                    <t t-esc="docs.partner_id.name"/>
+                </div>
+                <div>
+                    <t t-if="docs.partner_id.street">
+                        <t t-esc="docs.partner_id.street"/>
+                    </t>
+                    <t t-if="docs.partner_id.city">
+                        <t t-esc="docs.partner_id.city"/>,
+                    </t>
+                    <t t-if="docs.partner_id.state_id">
+                        <t t-esc="docs.partner_id.state_id.name"/>,
+                    </t>
+                    <t t-if="docs.partner_id.zip">
+                        <t t-esc="docs.partner_id.zip"/>,
+                    </t>
+                    <t t-if="docs.partner_id.country_id">
+                        <t t-esc="docs.partner_id.country_id.name"/>
+                    </t>
+                </div>
+            </div>
+            <div class="text-left" style="margin-left:20mm; margin-right:20mm; margin-top:20mm;">
                 <h2>
                     <t t-if="docs.type =='sale'">
                         Sales Order
@@ -750,6 +787,14 @@
                         1 USD discount per point off spec
                     </div>
                 </t>
+                <t t-if="docs.notes">
+                    <div style="font-weight: bold; padding-top:18px;">
+                        Remarks
+                    </div>
+                    <div style="padding-top:5px;">
+                        <t t-esc="docs.notes"/>
+                    </div>
+                </t>
             </div>
         </template>
 
@@ -758,7 +803,7 @@
                 <t t-set="lang" t-value="en_US"/>
                 <t t-call="xf_partner_contract.custom_contract_layout" t-lang="lang">
                     <div class="page" style="background-image:url('/xf_partner_contract/static/description/back.jpg');
-                        background-size:235mm 250mm; padding-top:0mm; font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:1; font-size: .9rem;">
+                        background-size:235mm 285mm; width:235mm; height:285mm; padding-top:0mm; font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:1; font-size: .9rem;">
                         <t t-if="docs.line_ids">
                             <t t-set="j" t-value="1"/>
                             <t t-foreach="docs.line_ids" t-as="result">
@@ -766,8 +811,9 @@
                                     <t t-call="xf_partner_contract.first_product" t-lang="lang"/>
                                 </t>
                                 <t t-if="j>1">
-                                    <div class="page" style="page-break-before:always; background-image:url('/xf_partner_contract/static/description/back.jpg');
-                                    background-size:235mm 250mm; padding-top:0mm; font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:1;">
+                                    <div class="page" style="page-break-before:always;
+                                        background-image:url('/xf_partner_contract/static/description/back.jpg');
+                                        background-size:235mm 285mm; width:235mm; height:285mm; padding-top:0mm; font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:1; font-size: .9rem;">
                                         <t t-call="xf_partner_contract.first_product" t-lang="lang"/>
                                     </div>
                                 </t>
@@ -779,9 +825,10 @@
                         </t>
                         <div class="row" style="page-break-before:always;
                                         background-image:url('/xf_partner_contract/static/description/back.jpg');
-                                        background-size:235mm 250mm; width:235mm; height:250mm; padding-top:0mm;">
+                                        background-size:240mm 285mm; width:240mm; height:285mm; padding-top:0mm;">
+
                             <div class="text-left"
-                                 style="font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:2; margin-left:20mm; margin-right:20mm;">
+                                 style="font-family: Arial, Helvetica, sans-serif; font-weight: 8; line-height:2; margin-left:20mm; margin-right:20mm; margin-top:10mm;">
                                 <div style="font-weight: bold; font-size: 23px;">
                                     Documents to be provided by seller
                                 </div>
@@ -792,14 +839,30 @@
                                     - Annex VII
                                 </div>
                                 <div>
-                                    - Green list waste contract
+                                    - Self-declaration; Feedstock is Used Cooking Oil (UCO) of Virgin Vegetable Oil
+                                    (VVO) origin
                                 </div>
                                 <div>
                                     - ISCC EU Delivery note
                                 </div>
                                 <div>
+                                    - Packing list
+                                </div>
+                                <div>
+                                    - Marine insurance certificate for 110% cargo value covering “All Risks”
+                                </div>
+                                <div>
                                     - B/L copy, marked freight prepaid inc ship. on board stamped, telex or
                                     seaway bill
+                                </div>
+                                <div>
+                                    - Weight tickets of each container
+                                </div>
+                                <div>
+                                    - Picture form each load iso or flexi-bag (tank number)
+                                </div>
+                                <div>
+                                    - EUR1 certificate
                                 </div>
                                 <br/>
                                 <br/>
