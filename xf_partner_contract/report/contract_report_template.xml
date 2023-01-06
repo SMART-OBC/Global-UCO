@@ -107,7 +107,7 @@
                 </div>
             </div>
 
-            <div class="text-left" style="margin-left:20mm; margin-right:20mm; margin-top:20mm;">
+            <div class="text-left" style="margin-left:20mm; margin-right:20mm; margin-top:15mm;">
                 <h2>
                     <t t-if="docs.type =='sale'">
                         Sales order
