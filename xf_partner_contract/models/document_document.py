@@ -9,8 +9,4 @@ class DocumentsDocument(models.Model):
         string='Contract',
     )
 
-    @api.model
-    def get_abc(self, args):
-        print('self', self)
-        print('ggggggggggggggggg', args)
 

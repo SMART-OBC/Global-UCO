@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Contract Management',
-    'version': '1.0.0',
+    'version': '15.0.1.1.1',
     'summary': """
     This module helps to manage/approve/renew contracts
     , purchase contract 
@@ -47,15 +47,23 @@ Manage, approve, renew contracts
         'views/res_config_settings_views.xml',
         'views/account_move.xml',
         'views/specification.xml',
-        'views/document_document.xml'
+        'views/delivery_terms.xml',
+        'views/contract_trading_rule.xml',
+        'views/contract_legislation.xml',
+        'views/document_document.xml',
+        'report/contract_report_template.xml',
+        'report/custom_invoice_report_template.xml',
+        'views/report.xml'
     ],
     'assets': {
         'web.assets_backend': [
             '/xf_partner_contract/static/src/js/document.js',
-            '/xf_partner_contract/static/src/js/document_controller_mixin.js'
+            '/xf_partner_contract/static/src/js/document_controller_mixin.js',
+            '/xf_partner_contract/static/src/js/side_bar.js'
+
         ],
     },
-    'depends': ['account', 'documents'],
+    'depends': ['account_accountant', 'documents', 'stock'],
     'qweb': [],
     'images': [
         'static/description/xf_partner_contract.png',

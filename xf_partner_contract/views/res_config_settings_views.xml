@@ -19,7 +19,8 @@
                             <div class="o_setting_right_pane">
                                 <label for="contract_approval"/>
                                 <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."
-                                      aria-label="Values set here are company-specific." groups="base.group_multi_company"
+                                      aria-label="Values set here are company-specific."
+                                      groups="base.group_multi_company"
                                       role="img"/>
                                 <div class="text-muted">
                                     Use team-based approval workflows for contracts
@@ -31,12 +32,15 @@
                                 </div>
                             </div>
                         </div>
+
+
                         <div class="col-12 col-lg-6 o_setting_box" id="use_contract">
                             <div class="o_setting_left_pane"/>
                             <div class="o_setting_right_pane">
                                 <label for="use_contract"/>
                                 <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."
-                                      aria-label="Values set here are company-specific." groups="base.group_multi_company"
+                                      aria-label="Values set here are company-specific."
+                                      groups="base.group_multi_company"
                                       role="img"/>
                                 <div class="text-muted">
                                     Use contract to create customer invoices and vendor bills
@@ -48,6 +52,72 @@
                                 </div>
                             </div>
                         </div>
+
+
+                        <div class="col-12 col-lg-6 o_setting_box" id="contract_approval">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="use_contract_amount_type"/>
+                                <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."
+                                      aria-label="Values set here are company-specific."
+                                      groups="base.group_multi_company"
+                                      role="img"/>
+                                <div class="text-muted">
+                                    Use contracts amount type in your contracts
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="use_contract_amount_type" class="o_light_label" widget="radio"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12 col-lg-6 o_setting_box" id="use_contract">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="contract_currency_ids"/>
+                                <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."
+                                      aria-label="Values set here are company-specific."
+                                      groups="base.group_multi_company"
+                                      role="img"/>
+                                <div class="text-muted">
+                                    Use contracts currencies for your contract
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="contract_currency_ids" widget="many2many_tags"/>
+                                    </div>
+                                    <button name="action_view_currency" icon="fa-arrow-right" type="object"
+                                            string="Currencies" class="btn-link o_web_settings_access_rights"/>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box" id="contract_approval">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <label for="contract_uom_ids"/>
+                                <span class="fa fa-lg fa-building-o" title="Values set here are company-specific."
+                                      aria-label="Values set here are company-specific."
+                                      groups="base.group_multi_company"
+                                      role="img"/>
+                                <div class="text-muted">
+                                    Use UOM for your contracts
+                                </div>
+                                <div class="content-group">
+                                    <div class="mt16">
+                                        <field name="contract_uom_ids" class="o_light_label" widget="many2many_tags"/>
+                                    </div>
+                                    <button name="action_view_uom" icon="fa-arrow-right" type="object"
+                                            string="Units of Measure" class="btn-link o_web_settings_access_rights"/>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </xpath>

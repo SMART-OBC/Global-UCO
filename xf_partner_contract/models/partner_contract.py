@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import date
-
+from datetime import datetime
+from odoo import http, tools
 from dateutil.relativedelta import relativedelta
 
 from odoo import models, fields, api, _
@@ -17,18 +18,27 @@ class PartnerContract(models.Model):
 
     _min_user_group = 'xf_partner_contract.group_xf_partner_contract_user'
 
+    def _default_sett_value(self):
+        res = self.env['ir.config_parameter'].sudo().get_param('xf_partner_contract.use_contract_amount_type', default='')
+        return res
+
     # Fields
+    sale_report_name = fields.Char()
+    purchase_report_name = fields.Char()
     name = fields.Char(
         string='Name',
         required=True,
         readonly=True,
         tracking=1,
-    )
+        copy=False,
+        default=lambda self: _('New'))
+    name_seq_no = fields.Integer()
     ref = fields.Char(
         string='Reference',
         required=True,
         readonly=True,
         tracking=1,
+        translate=True
     )
     active = fields.Boolean(
         default=True,
@@ -102,8 +112,13 @@ class PartnerContract(models.Model):
              "- All Internal Users: employees may see all contracts.\n"
              "- Invited Internal Users: employees may only see the followed contracts.\n"
     )
+    contract_amount_type = fields.Selection([
+            ('price', 'Price'),
+            ('unit', 'Unit of measure'),
+        ], string='Contract amount type'
+    )
     amount = fields.Monetary(
-        string='Cost',
+        string='End amount',
         readonly=True,
         tracking=1,
     )
@@ -111,9 +126,11 @@ class PartnerContract(models.Model):
         string='Currency',
         comodel_name='res.currency',
         default=lambda self: self.env.company.currency_id,
-        readonly=True,
+        # readonly=True,
         tracking=1,
     )
+    unit_id = fields.Many2one('uom.uom', string='Unit of measure')
+    end_units = fields.Float(string='End units')
     date_start = fields.Date(
         string='Start Date',
         required=True,
@@ -139,7 +156,7 @@ class PartnerContract(models.Model):
         string='Days Left',
     )
     notes = fields.Text(
-        string='Terms and Conditions',
+        string='Remark',
         help='Write here all supplementary information relative to this contract',
         copy=False,
         readonly=True,
@@ -215,13 +232,132 @@ class PartnerContract(models.Model):
         compute_sudo=True,
     )
     document_count = fields.Integer(string="Document count", compute="compute_document_count")
+    amount_type_sett = fields.Selection([
+        ('no', 'No'),
+        ('optional', 'Optional'),
+        ('require', 'Required'),
+    ],  default=_default_sett_value)
+    ffa = fields.Char(string="FFA")
+    ffa_min_max = fields.Selection([
+        ('min', 'Min'),
+        ('max', 'Max'),
+    ], string=False)
+    m_and_i = fields.Char(string="M&I")
+    m_and_i_min_max = fields.Selection([
+        ('min', 'Min'),
+        ('max', 'Max'),
+    ], string=False)
+    iv = fields.Char(string="IV")
+    iv_min_max = fields.Selection([
+        ('min', 'Min'),
+        ('max', 'Max'),
+    ], string=False)
+    sulphur = fields.Char(string="Sulphur")
+    sulphur_iv_min_max = fields.Selection([
+        ('min', 'Min'),
+        ('max', 'Max'),
+    ], string=False)
+    appearance = fields.Char(string="Appearance", translate=True)
+    period_f_delivery = fields.Date(string="Period of shipping and delivery", related='date_start', translate=True)
+    period_f_delivery_end = fields.Date(related='date_end', translate=True)
+    packaging = fields.Char(string="Packaging", translate=True)
+    expected_containers = fields.Char(string="Expected amount of containers", translate=True)
+    trading_rule_id = fields.Many2one('contract.trading.rule', 'Applied trading rule')
+    legislation_id = fields.Many2one('contract.legislation', 'Legislation')
+    delivery_term_id = fields.Many2one('delivery.terms', 'Delivery Terms')
+    country_id = fields.Many2one('res.country', string="Country of origin")
+    line_total = fields.Float(compute='_compute_line_total', string='Line Total')
+
+
+    def _compute_line_total(self):
+        print('self', self)
+        for rec in self:
+            if rec.line_ids:
+                val = sum(rec.line_ids.mapped('price_unit'))
+            else:
+                val = False
+            rec.line_total = val
+
+    @api.model
+    def create(self, vals):
+        if vals.get('name', _('New')) == _('New'):
+            today = fields.Datetime.now()
+            today1 = today.date()
+            if vals.get('type') == 'sale':
+                contracts = self.env['xf.partner.contract'].search(
+                    [('type','=','sale')])
+                today_contract = contracts.filtered(lambda a: a.create_date.date() == today1)
+                if not today_contract:
+                    last_seq = 1
+                    vals['name_seq_no'] = last_seq
+                else:
+                    last_record = today_contract.sorted('id', reverse=True)
+                    last_seq = last_record[0].name_seq_no + 1
+                    vals['name_seq_no'] = last_seq
+                today_date = today.date().strftime("%d/%m/%Y")
+                if last_seq < 10:
+                    vals['name'] = 'G.U.C. %s/0%s' % (str(today_date), str(last_seq))
+                    vals['sale_report_name'] = 'GUC%s/0%s' % (str(today_date), str(last_seq))
+                else:
+                    vals['name'] = 'G.U.C. %s/%s' % (str(today_date), str(last_seq))
+                    vals['sale_report_name'] = 'GUC%s/%s' % (str(today_date), str(last_seq))
+            if vals.get('type') == 'purchase':
+                contracts = self.env['xf.partner.contract'].search(
+                    [('type', '=', 'purchase')])
+                today_contract = contracts.filtered(lambda a: a.create_date.date() == today1)
+                if not today_contract:
+                    last_seq = 1
+                    vals['name_seq_no'] = last_seq
+                else:
+                    last_record = today_contract.sorted('id', reverse=True)
+                    last_seq = last_record[0].name_seq_no + 1
+                    vals['name_seq_no'] = last_seq
+                today_date = today.date().strftime("%d/%m/%Y")
+                if last_seq < 10:
+                    vals['name'] = 'P.O. %s/0%s' % (str(today_date), str(last_seq))
+                    vals['purchase_report_name'] = 'PO%s/0%s' % (str(today_date), str(last_seq))
+                else:
+                    vals['name'] = 'P.O. %s/%s' % (str(today_date), str(last_seq))
+                    vals['purchase_report_name'] = 'PO%s/%s' % (str(today_date), str(last_seq))
+        return super(PartnerContract, self).create(vals)
+
+    def action_print(self):
+        """Print Contract function"""
+        if not self.sale_report_name or self.purchase_report_name:
+            contract_date = self.create_date
+            today_date = contract_date.date().strftime("%d/%m/%Y")
+            if self.type == 'sale':
+                if self.name_seq_no < 10:
+                    self.sale_report_name = 'GUC%s/0%s' % (str(today_date), str(self.name_seq_no))
+                if self.name_seq_no > 10:
+                    self.sale_report_name = 'GUC%s/%s' % (str(today_date), str(self.name_seq_no))
+            if self.type == 'purchase':
+                if self.name_seq_no < 10:
+                    self.sale_report_name = 'PO%s/0%s' % (str(today_date), str(self.name_seq_no))
+                if self.name_seq_no > 10:
+                    self.sale_report_name = 'PO%s/%s' % (str(today_date), str(self.name_seq_no))
+        return self.env.ref('xf_partner_contract.action_print_contract').report_action(self)
+
+    @api.onchange('contract_amount_type')
+    def _onchange_contract_amount_type(self):
+        """Setup domain for currency_id and unit_id fields based on settings"""
+        if self.contract_amount_type == 'price':
+            values = self.env['ir.config_parameter'].sudo().get_param('xf_partner_contract.contract_currency_ids')
+            if values:
+                return {'domain': {'currency_id': [('id', 'in', eval(values)),
+                                       ]}}
+        if self.contract_amount_type == 'unit':
+            values = self.env['ir.config_parameter'].sudo().get_param('xf_partner_contract.contract_uom_ids')
+            if values:
+                return {'domain': {'unit_id': [('id', 'in', eval(values)),
+                                       ]}}
 
     def compute_document_count(self):
+        """Document count"""
         self.ensure_one()
         self.document_count = len(self.env['documents.document'].search([('contract_id','=', self.id)]))
 
     def action_view_document(self):
-        print('self.id', self.id)
         document =self.env['documents.document'].search(
             [('contract_id', '=', self.id)])
         return {
@@ -526,6 +662,29 @@ class PartnerContract(models.Model):
         action['context'] = context
         return action
 
+    def action_view_bills(self):
+        self.action_view_invoice()
+        if len(self.invoice_ids) > 1:
+            return {
+                'name': _('Invoice'),
+                'view_mode': 'tree,form',
+                'res_model': 'account.move',
+                'domain': [('id', 'in', self.invoice_ids.ids)],
+                'type': 'ir.actions.act_window',
+            }
+        else:
+            return {
+                'name': _('Invoice'),
+                'view_mode': 'form',
+                'view_type': ' form',
+                'view_id': self.env.ref('account.view_move_form').id,
+                'res_id': self.invoice_ids.id,
+                'res_model': 'account.move',
+                'domain': [('id', 'in', self.invoice_ids.ids)],
+                'type': 'ir.actions.act_window',
+            }
+
+
     # Business methods
 
     def _check_access_before_update(self):
@@ -750,12 +909,14 @@ class PartnerContractLine(models.Model):
     name = fields.Char(
         string='Label',
         required=True,
+        copy=False
     )
     quantity = fields.Float(
         string='Quantity',
         default=1.0,
         digits='Product Unit of Measure',
     )
+    line_unit_id = fields.Many2one('uom.uom', string='Unit of measure', related='contract_id.unit_id')
     partner_id = fields.Many2one(
         comodel_name='res.partner',
         string='Partner',
