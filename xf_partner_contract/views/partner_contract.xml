@@ -63,19 +63,13 @@
                                 states="approval"
                                 attrs="{'invisible':['|', ('has_access', '!=', True)]}"
                         />
-                        <button name="action_print" type="object"
-                                string="Print"
-                        />
-
-
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button type="object" class="oe_stat_button" icon="fa-pencil-square-o"
                                     name="action_view_invoice"
-                                    context="{'default_contract_id': active_id}"
-                                    attrs="{'invisible':  [('type', '!=', 'sale')]}">
+                                    context="{'default_contract_id': active_id}">
                                 <div class="o_form_field o_stat_info">
                                     <span class="o_stat_value">
                                         <field name="invoice_ids_count"/>
@@ -83,19 +77,6 @@
                                     <span class="o_stat_text">Invoices</span>
                                 </div>
                             </button>
-
-                            <button type="object" class="oe_stat_button" icon="fa-pencil-square-o"
-                                    name="action_view_bills"
-                                    context="{'default_contract_id': active_id}"
-                                    attrs="{'invisible':  [('type', '!=', 'purchase')]}">
-                                <div class="o_form_field o_stat_info">
-                                    <span class="o_stat_value">
-                                        <field name="invoice_ids_count"/>
-                                    </span>
-                                    <span class="o_stat_text">Bills</span>
-                                </div>
-                            </button>
-
                             <button name="action_view_document" type="object" class="oe_stat_button"
                                     icon="fa-file-text-o"
                                     attrs="{'invisible':  [('document_count', '=', False)]}">
@@ -127,7 +108,8 @@
 
                         <div class="oe_title pr-0" name="title">
                             <h1 class="d-flex flex-row justify-content-between">
-                                <field name="name" class="text-truncate" placeholder="Contract Title"/>
+                                <field name="name" class="text-truncate" placeholder="Contract Title"
+                                       attrs="{'readonly':[('can_edit', '!=', True)]}"/>
                                 <field name="kanban_state" widget="state_selection"/>
                             </h1>
                             <div name="options_active">
@@ -163,9 +145,6 @@
                                        'required':[('contract_approval', '=', 'required')],
                                        'readonly':[('can_edit', '!=', True)],
                                        }"/>
-                                <field name="payment_term_id"
-                                           attrs="{'readonly':[('can_edit', '!=', True)]}"/>
-
                             </group>
                         </group>
                         <group>
@@ -179,93 +158,17 @@
                                 <field name="date_last_payment"
                                        attrs="{'readonly':[('can_edit', '!=', True)]}"/>
                                 <field name="expiring_state"/>
-
                             </group>
                         </group>
                         <group>
                             <group>
-                                <field name="amount_type_sett" invisible="1"/>
-                                <field name="contract_amount_type" attrs="{'required': [('amount_type_sett', '=', 'require')],
-                                'invisible': [('amount_type_sett', '=', 'no')]}"/>
-                                <field name="currency_id"
-                                       attrs="{'readonly':[('can_edit', '!=', True)],
-                                       'invisible': [('contract_amount_type', '!=', 'price')],
-                                       'required': [('contract_amount_type', '=', 'price')]}"
-                                />
-                                <!--                                       groups="base.group_multi_currency"/>-->
                                 <field name="amount"
-                                       attrs="{'readonly':[('can_edit', '!=', True)],
-                                        'invisible': [('contract_amount_type', '!=', 'price')],
-                                       'required': [('contract_amount_type', '=', 'price')]}"/>
-
-                                <field name="unit_id"
-                                       attrs="{'required': [('contract_amount_type', '=', 'unit')],
-                                       'invisible': [('contract_amount_type', '!=', 'unit')]}"/>
-                                <field name="end_units"
-                                       attrs="{'required': [('contract_amount_type', '=', 'unit')],
-                                       'invisible': [('contract_amount_type', '!=', 'unit')]}"/>
-                            </group>
-                            <group>
-                                <field name="delivery_term_id"/>
+                                       attrs="{'readonly':[('can_edit', '!=', True)]}"/>
+                                <field name="currency_id"
+                                       attrs="{'readonly':[('can_edit', '!=', True)]}"
+                                       groups="base.group_multi_currency"/>
                             </group>
                         </group>
-                        <group>
-                            <group>
-                                <group>
-                                    <field name="ffa"/>
-                                </group>
-                                <group>
-                                    <field name="ffa_min_max" nolabel="1"/>
-                                </group>
-                                <group>
-                                    <field name="m_and_i"/>
-                                </group>
-
-                                <group>
-                                    <field name="m_and_i_min_max" nolabel="1"/>
-                                </group>
-
-                                <group>
-                                    <field name="iv"/>
-                                </group>
-                                <group>
-                                    <field name="iv_min_max" nolabel="1"/>
-
-                                </group>
-                                <group>
-                                    <field name="sulphur"/>
-                                </group>
-                                <group>
-                                    <field name="sulphur_iv_min_max" nolabel="1"/>
-                                </group>
-                                <group>
-                                    <field name="country_id" style="width:358px;"/>
-                                </group>
-                            </group>
-                            <group>
-                                <label for="period_f_delivery"/>
-                                <div class="w-100">
-                                    <div class="o_row">
-                                        <field name="period_f_delivery" widget="daterange"
-                                               options='{"related_end_date": "period_f_delivery_end"}'/>
-                                        <i class="fa fa-long-arrow-right mx-2 oe_edit_only" aria-label="Arrow icon"
-                                           title="Arrow"/>
-                                        <i class="fa fa-long-arrow-right mx-2 oe_read_only" aria-label="Arrow icon"
-                                           title="Arrow"
-                                           attrs="{'invisible': [('period_f_delivery', '=', False), ('period_f_delivery_end', '=', False)]}"/>
-                                        <field name="period_f_delivery_end" widget="daterange"
-                                               options='{"related_start_date": "period_f_delivery"}'/>
-                                    </div>
-                                </div>
-                                <field name="appearance" string="Appearance"/>
-
-                                <field name="packaging"/>
-                                <field name="expected_containers"/>
-                                <field name="trading_rule_id"/>
-                                <field name="legislation_id"/>
-                            </group>
-                        </group>
-
                         <notebook>
                             <page name="lines" string="Lines" attrs="{'invisible':[('use_lines', '!=', True)]}">
                                 <field name="line_ids" nolabel="1"
@@ -288,7 +191,6 @@
                                         <field name="analytic_tag_ids" groups="analytic.group_analytic_tags"
                                                optional="show" widget="many2many_tags"/>
                                         <field name="quantity"/>
-                                        <field name="line_unit_id"/>
                                         <field name="product_uom_category_id" invisible="True"/>
                                         <field name="product_uom_id" string="UoM" groups="uom.group_uom"
                                                optional="show"/>
@@ -297,9 +199,10 @@
                                     </tree>
                                 </field>
                             </page>
-                            <page name="notes" string="Remarks">
+                            <page name="notes" string="Terms and Conditions">
                                 <group>
-
+                                    <field name="payment_term_id"
+                                           attrs="{'readonly':[('can_edit', '!=', True)]}"/>
                                     <field name="notes"
                                            attrs="{'readonly':[('can_edit', '!=', True)]}"/>
                                 </group>
@@ -476,6 +379,7 @@
                 res_model="xf.partner.contract"
                 context="{'search_default_group_by_state': 1}"
                 view_mode="kanban,tree,form"/>
+
         <menuitem
                 id="xf_partner_contract_menuitem"
                 name="Contracts"
@@ -483,5 +387,6 @@
                 parent="xf_partner_contract.xf_partner_contract_root_menuitem"
                 sequence="1"
         />
+
     </data>
 </odoo>

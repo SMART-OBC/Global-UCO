@@ -19,30 +19,11 @@ class AccountMove(models.Model):
         ondelete='restrict',
         domain=[('state', '=', 'running')],
     )
-    contract_no = fields.Char(string='Contract Number', related='contract_id.name')
-    # incoterm_id =
-    package_id = fields.Many2one('stock.quant.package', 'Packaging',)
-    country_origin_id = fields.Many2one('res.country', string='Country of origin')
-    your_rev = fields.Char('Your Reference')
 
-    def action_post(self):
-        """supering invoice confirming function for amount/uom deduction from contract"""
-        if self.invoice_line_ids and self.contract_id:
-            contract = self.contract_id
-            if contract.contract_amount_type == 'price':
-                if contract.amount - self.amount_total < 0:
-                    raise ValidationError(_('The bill amount is higher than contract amount'))
-                contract.amount = contract.amount - self.amount_total
-                if contract.amount == 0:
-                    contract.state = 'expired'
-            elif contract.contract_amount_type == 'unit':
-                qty = self.invoice_line_ids.mapped('quantity')
-                if contract.end_units - sum(qty) < 0:
-                    raise ValidationError(_('The bill quantity is higher than contract quantity'))
-                contract.end_units = contract.end_units - sum(qty)
-                if contract.end_units == 0:
-                    contract.state = 'expired'
-        return super(AccountMove, self).action_post()
+    # Compute and search fields, in the same order of fields declaration
+    # Constraints and onchanges
+    # Built-in methods overrides
+    # Action methods
 
     def apply_contract(self):
         for move in self:
@@ -68,14 +49,3 @@ class AccountMove(models.Model):
             move.with_context(check_move_validity=False)._onchange_invoice_line_ids()
 
     # Business methods
-
-    def print_custom_invoice(self):
-        product = []
-        return self.env.ref('xf_partner_contract.print_custom_invoice').report_action(self)
-
-
-class AccountMoveLineInherit(models.Model):
-    _inherit = 'account.move.line'
-
-    container_no = fields.Char(string='Container Number', tracking=True)
-
