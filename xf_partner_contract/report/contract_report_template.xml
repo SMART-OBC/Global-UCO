@@ -461,7 +461,7 @@
             <t t-set="docs" t-value="docs.with_context(lang=lang)"/>
                         <div class="text-left" style="margin-left: 150mm; margin-top: 30mm; line-height:1.5; margin-right:40mm;">
                 <div>
-                    <t t-esc="docs.partner_id.name"/>
+                    <t t-esc="docs.partner_id.display_name"/>
                 </div>
                 <div>
                     <t t-if="docs.partner_id.street">
